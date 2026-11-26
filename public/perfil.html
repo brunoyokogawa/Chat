@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>orkut - Editar Perfil XYZ</title>
+  <title>orkut - Editar Perfil</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -19,7 +19,7 @@
 
   <main class="login-wrapper">
     <div class="card" style="max-width: 540px; margin: 0 auto; padding: 22px;">
-      <h2 class="section-title">Editar meu perfil no <span class="pink-text">orkut XYZ</span></h2>
+      <h2 class="section-title">Editar meu perfil no <span class="pink-text">orkut</span></h2>
 
       <form id="editarForm" class="form-stack">
         <label>Nome de Exibição:</label>
@@ -36,7 +36,7 @@
           <option value="🎧 Ouvindo música">🎧 Ouvindo música</option>
           <option value="🔥 Apagando incêndio">🔥 Apagando incêndio</option>
           <option value="😴 Com sono">😴 Com sono</option>
-          <option value="👑 Gerenciando a XYZ">👑 Gerenciando a XYZ</option>
+          <option value="👑 Gerenciando o Orkut">👑 Gerenciando o Orkut</option>
         </select>
 
         <label>Nova Senha (deixe em branco para manter a atual):</label>
@@ -104,41 +104,4 @@
         fotoPerfil = '';
       } else {
         const novaPerfil = await processarImagem(document.getElementById('fotoPerfilInput').files[0], 200);
-        if (novaPerfil) fotoPerfil = novaPerfil;
-      }
-
-      if (document.getElementById('removerFotoFundo').checked) {
-        fotoFundo = '';
-      } else {
-        const novaFundo = await processarImagem(document.getElementById('fotoFundoInput').files[0], 1000);
-        if (novaFundo) fotoFundo = novaFundo;
-      }
-
-      const payload = {
-        nome: document.getElementById('nome').value,
-        username: document.getElementById('username').value,
-        humor: document.getElementById('humor').value,
-        senha: document.getElementById('senha').value,
-        fotoPerfil,
-        fotoFundo
-      };
-
-      const res = await fetch(`/api/perfil/${usuario.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        statusDiv.textContent = data.erro;
-        return;
-      }
-
-      localStorage.setItem('orkut_usuario', JSON.stringify(data.usuario));
-      alert('Perfil atualizado!');
-      window.location.href = 'chat.html';
-    });
-  </script>
-</body>
-</html>
+        if (novaPerfil) fotoPerfil = nova

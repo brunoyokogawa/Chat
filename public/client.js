@@ -1,19 +1,16 @@
 const socket = io();
 
-// Verifica sessão salva no login
 const usuario = JSON.parse(localStorage.getItem('orkut_usuario'));
 if (!usuario) {
   window.location.href = 'index.html';
 }
 
-// Aplica foto de fundo personalizada (se o usuário cadastrou uma)
 if (usuario.fotoFundo) {
   document.body.style.backgroundImage = `url('${usuario.fotoFundo}')`;
   document.body.style.backgroundSize = 'cover';
   document.body.style.backgroundAttachment = 'fixed';
 }
 
-// Preenche dados do perfil
 document.getElementById('profileName').textContent = usuario.nome;
 document.getElementById('profileHumor').textContent = usuario.humor;
 document.getElementById('topUserInfo').textContent = `@${usuario.username}`;
@@ -27,25 +24,21 @@ if (usuario.fotoPerfil) {
   document.getElementById('avatarInitials').textContent = usuario.nome.substring(0, 2).toUpperCase();
 }
 
-// Mostra botões de Admin se o usuário tiver cargo 'admin'
 if (usuario.cargo === 'admin') {
   document.getElementById('adminLink').classList.remove('hidden');
   document.getElementById('adminBadge').classList.remove('hidden');
 }
 
-// Logout
 document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('orkut_usuario');
   window.location.href = 'index.html';
 });
 
-// Conecta ao Socket.io
-let salaAtual = 'Geral XYZ';
+let salaAtual = 'Geral';
 let totalScraps = 0;
 
 socket.emit('entrar_chat', { username: usuario.username, sala: salaAtual });
 
-// ================= FIGURINHAS (STICKERS NOSTÁLGICOS) =================
 const figurinhasOrkut = [
   { emoji: '☕💖', texto: 'Pausa pro Café!' },
   { emoji: '💻🔥', texto: 'Compilou de primeira!' },
@@ -80,7 +73,6 @@ document.getElementById('toggleStickerBtn').addEventListener('click', () => {
   stickerPicker.classList.toggle('hidden');
 });
 
-// ================= ENVIO DE FOTOS NO CHAT =================
 document.getElementById('photoUpload').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -111,7 +103,6 @@ document.getElementById('photoUpload').addEventListener('change', (e) => {
   e.target.value = '';
 });
 
-// ================= ENVIO DE TEXTO =================
 const messageForm = document.getElementById('messageForm');
 const messageInput = document.getElementById('messageInput');
 
@@ -141,7 +132,6 @@ function incrementarScraps() {
   document.getElementById('scrapCount').textContent = totalScraps;
 }
 
-// ================= TROCA DE COMUNIDADE =================
 document.getElementById('roomsList').addEventListener('click', (e) => {
   const item = e.target.closest('li');
   if (!item) return;
@@ -160,7 +150,6 @@ document.getElementById('roomsList').addEventListener('click', (e) => {
   socket.emit('trocar_sala', salaAtual);
 });
 
-// ================= RENDERIZAÇÃO DAS MENSAGENS =================
 const messagesList = document.getElementById('messagesList');
 
 socket.on('historico_mensagens', (mensagens) => {

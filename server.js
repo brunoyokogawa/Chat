@@ -7,22 +7,20 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  maxHttpBufferSize: 1e7 // Permite envio de fotos até 10MB via Socket.io
+  maxHttpBufferSize: 1e7
 });
 
 const DB_PATH = path.join(__dirname, 'db.json');
 
-// Aumenta limite JSON para aceitar fotos em Base64 no cadastro
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Funções auxiliares para ler e salvar no db.json (estilo seu projeto CRUD)
 function lerDB() {
   if (!fs.existsSync(DB_PATH)) {
     const inicial = {
       usuarios: [],
       mensagens: {
-        'Geral XYZ': [],
+        'Geral': [],
         'Café & Fofocas': [],
         'Suporte TI': [],
         'Eu Odeio Acordar Cedo': []
@@ -36,8 +34,6 @@ function lerDB() {
 function salvarDB(dados) {
   fs.writeFileSync(DB_PATH, JSON.stringify(dados, null, 2));
 }
-
-// ================= ROTAS DE CADASTRO, LOGIN E ADMIN =================
 
 // 1. Cadastrar novo usuário
 app.post('/api/cadastro', (req, res) => {
@@ -59,7 +55,7 @@ app.post('/api/cadastro', (req, res) => {
     nome: nome.trim(),
     username: username.trim(),
     senha: senha.trim(),
-    cargo: db.usuarios.length === 0 ? 'admin' : 'usuario', // Primeiro cadastrado ou padrão
+    cargo: db.usuarios.length === 0 ? 'admin' : 'usuario',
     humor: humor || '😊 Feliz',
     fotoPerfil: fotoPerfil || '',
     fotoFundo: fotoFundo || ''
@@ -84,13 +80,11 @@ app.post('/api/login', (req, res) => {
     return res.status(401).json({ erro: 'Usuário ou senha inválidos!' });
   }
 
-  // Retorna dados sem a senha
   const { senha: _, ...dadosSeguros } = usuario;
   res.json({ usuario: dadosSeguros });
 });
 
-
-// 2.5 Editar perfil completo (Nome, Username, Humor, Senha, Cargo, Foto de Perfil e Fundo)
+// 2.5 Editar perfil completo
 app.put('/api/perfil/:id', (req, res) => {
   const id = Number(req.params.id);
   const { nome, username, humor, senha, cargo, fotoPerfil, fotoFundo } = req.body;
@@ -99,7 +93,6 @@ app.put('/api/perfil/:id', (req, res) => {
   const user = db.usuarios.find((u) => u.id === id);
   if (!user) return res.status(404).json({ erro: 'Usuário não encontrado.' });
 
-  // Verifica se o novo username já pertence a outra pessoa
   if (username && username.trim() !== '') {
     const novoUserClean = username.trim().toLowerCase();
     const duplicado = db.usuarios.some(
@@ -120,7 +113,6 @@ app.put('/api/perfil/:id', (req, res) => {
 
   salvarDB(db);
 
-  // Atualiza em tempo real caso o usuário esteja online no chat
   Object.values(usuariosOnline).forEach((online) => {
     if (online.id === user.id || online.username === user.username) {
       online.username = user.username;
@@ -135,24 +127,12 @@ app.put('/api/perfil/:id', (req, res) => {
   const { senha: _, ...dadosSeguros } = user;
   res.json({ mensagem: 'Perfil atualizado com sucesso!', usuario: dadosSeguros });
 });
+
 // 3. Rotas da Sessão Admin
 app.get('/api/admin/dados', (req, res) => {
   const db = lerDB();
   const usuariosSemSenha = db.usuarios.map(({ senha, ...u }) => u);
   res.json({ usuarios: usuariosSemSenha, mensagens: db.mensagens });
-});
-
-app.put('/api/admin/usuario/:id/cargo', (req, res) => {
-  const id = Number(req.params.id);
-  const { cargo } = req.body;
-  const db = lerDB();
-
-  const user = db.usuarios.find((u) => u.id === id);
-  if (!user) return res.status(404).json({ erro: 'Usuário não encontrado.' });
-
-  user.cargo = cargo;
-  salvarDB(db);
-  res.json({ mensagem: 'Cargo atualizado!' });
 });
 
 app.delete('/api/admin/usuario/:id', (req, res) => {
@@ -175,7 +155,7 @@ app.delete('/api/admin/mensagens/:sala', (req, res) => {
   res.json({ mensagem: `Scraps da comunidade ${sala} foram limpos!` });
 });
 
-// ================= SOCKET.IO (TEMPO REAL) =================
+// ================= SOCKET.IO =================
 
 const usuariosOnline = {};
 
@@ -189,9 +169,10 @@ io.on('connection', (socket) => {
       return;
     }
 
-    const salaEscolhida = db.mensagens[sala] ? sala : 'Geral XYZ';
+    const salaEscolhida = db.mensagens[sala] ? sala : 'Geral';
 
     usuariosOnline[socket.id] = {
+      id: userDB.id,
       socketId: socket.id,
       username: userDB.username,
       nome: userDB.nome,
@@ -213,7 +194,6 @@ io.on('connection', (socket) => {
     atualizarUsuariosSala(salaEscolhida);
   });
 
-  // Enviar texto, foto ou figurinha
   socket.on('enviar_mensagem', ({ texto, imagem, tipoConteudo }) => {
     const user = usuariosOnline[socket.id];
     if (!user) return;
@@ -224,7 +204,7 @@ io.on('connection', (socket) => {
     const mensagem = {
       id: Date.now(),
       tipo: 'usuario',
-      tipoConteudo: tipoConteudo || 'texto', // 'texto', 'foto' ou 'figurinha'
+      tipoConteudo: tipoConteudo || 'texto',
       autor: user.nome,
       username: user.username,
       cargo: user.cargo,
@@ -238,7 +218,6 @@ io.on('connection', (socket) => {
     if (!db.mensagens[user.sala]) db.mensagens[user.sala] = [];
     db.mensagens[user.sala].push(mensagem);
 
-    // Mantém últimas 60 mensagens salvas por comunidade
     if (db.mensagens[user.sala].length > 60) {
       db.mensagens[user.sala].shift();
     }
@@ -279,7 +258,7 @@ io.on('connection', (socket) => {
       delete usuariosOnline[socket.id];
       io.to(sala).emit('nova_mensagem', {
         tipo: 'sistema',
-        texto: `👋 ${nome} saiu do Orkut XYZ.`,
+        texto: `👋 ${nome} saiu do Orkut.`,
         hora: obterHoraAtual()
       });
       atualizarUsuariosSala(sala);
@@ -302,5 +281,5 @@ function obterHoraAtual() {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`🚀 Orkut XYZ rodando em http://localhost:${PORT}`);
+  console.log(`🚀 Orkut rodando em http://localhost:${PORT}`);
 });

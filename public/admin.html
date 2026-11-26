@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>orkut - Painel Admin XYZ</title>
+  <title>orkut - Painel Admin</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -11,16 +11,15 @@
     <div class="header-container">
       <div class="logo-area">
         <span class="orkut-logo">orkut</span>
-        <span class="xyz-badge">👑 Administração XYZ</span>
+        <span class="xyz-badge">👑 Administração</span>
       </div>
       <a href="chat.html" style="color: #fff; text-decoration: underline;">← Voltar para o Chat</a>
     </div>
   </header>
 
   <main class="login-wrapper">
-    <!-- Tabela de Usuários -->
     <div class="card" style="margin-bottom: 16px;">
-      <h2 class="section-title">Gerenciar Funcionários Cadastrados</h2>
+      <h2 class="section-title">Gerenciar Membros Cadastrados</h2>
       <table class="orkut-table">
         <thead>
           <tr>
@@ -36,7 +35,6 @@
       </table>
     </div>
 
-    <!-- Formulário Completo de Edição pelo Admin -->
     <div id="boxEdicaoAdmin" class="card hidden" style="margin-bottom: 16px; border: 2px solid #ed2590;">
       <h2 class="section-title">Editando Perfil de: <span id="editTitulo" class="pink-text"></span></h2>
       <form id="adminEditForm" class="form-stack">
@@ -56,7 +54,7 @@
           <option value="🎧 Ouvindo música">🎧 Ouvindo música</option>
           <option value="🔥 Apagando incêndio">🔥 Apagando incêndio</option>
           <option value="😴 Com sono">😴 Com sono</option>
-          <option value="👑 Gerenciando a XYZ">👑 Gerenciando a XYZ</option>
+          <option value="👑 Gerenciando o Orkut">👑 Gerenciando o Orkut</option>
         </select>
 
         <label>Cargo / Permissão:</label>
@@ -89,11 +87,10 @@
       </form>
     </div>
 
-    <!-- Moderação das Salas -->
     <div class="card">
       <h2 class="section-title">Moderação de Comunidades (Limpar Scraps)</h2>
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <button class="btn-orkut" onclick="limparSala('Geral XYZ')">🗑️ Limpar Geral XYZ</button>
+        <button class="btn-orkut" onclick="limparSala('Geral')">🗑️ Limpar Geral</button>
         <button class="btn-orkut" onclick="limparSala('Café & Fofocas')">🗑️ Limpar Café & Fofocas</button>
         <button class="btn-orkut" onclick="limparSala('Suporte TI')">🗑️ Limpar Suporte TI</button>
         <button class="btn-orkut" onclick="limparSala('Eu Odeio Acordar Cedo')">🗑️ Limpar Eu Odeio Acordar Cedo</button>
@@ -132,7 +129,7 @@
           <td><strong>${u.cargo.toUpperCase()}</strong></td>
           <td>
             <button class="btn-orkut" onclick="abrirEdicao(${u.id})">✏️ Editar Perfil</button>
-            ${u.username !== 'admin' ? `<button class="btn-orkut" style="color:red;" onclick="excluirUsuario(${u.id})">Excluir</button>` : ''}
+            ${u.id !== usuarioLogado.id ? `<button class="btn-orkut" style="color:red;" onclick="excluirUsuario(${u.id})">Excluir</button>` : ''}
           </td>
         `;
         tbody.appendChild(tr);
@@ -226,7 +223,6 @@
         return;
       }
 
-      // Se o admin editou a própria conta, atualiza também o localStorage dele
       if (id === usuarioLogado.id) {
         localStorage.setItem('orkut_usuario', JSON.stringify(data.usuario));
       }

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>orkut - Login Empresa XYZ</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="orkut-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="orkut-logo">orkut</span>
+        <span class="xyz-badge">Empresa XYZ</span>
+      </div>
+      <div class="user-top-info">Bem-vindo à intranet nostálgica</div>
+    </div>
+  </header>
+
+  <main class="login-wrapper">
+    <div class="login-box">
+      <div class="login-left">
+        <h1 class="orkut-logo-big">orkut</h1>
+        <p><span class="pink-text">Conecte-se</span> aos seus colegas de trabalho da Empresa XYZ usando scraps, fotos e figurinhas em tempo real.</p>
+        <p><span class="pink-text">Personalize</span> seu perfil com foto e papel de parede exclusivo.</p>
+        <p><span class="pink-text">Participe</span> das comunidades internas da equipe remota!</p>
+        <div class="admin-tip">
+          💡 <strong>Dica Admin:</strong> Usuário <code>admin</code> / Senha <code>admin123</code>
+        </div>
+      </div>
+
+      <div class="login-right">
+        <div class="login-card">
+          <p class="login-title">Acesse o <strong>orkut XYZ</strong> com sua conta</p>
+          <form id="loginForm" class="form-stack">
+            <label>Usuário:</label>
+            <input type="text" id="username" placeholder="Seu username" required />
+
+            <label>Senha:</label>
+            <input type="password" id="senha" placeholder="Sua senha" required />
+
+            <div id="loginError" class="error-msg"></div>
+            <button type="submit" class="btn-orkut">Entrar</button>
+          </form>
+        </div>
+
+        <div class="login-footer-box">
+          Ainda não é membro? <br />
+          <a href="cadastro.html" class="orkut-link"><strong>ENTRAR JÁ (Criar Conta)</strong></a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const senha = document.getElementById('senha').value;
+      const errorDiv = document.getElementById('loginError');
+
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, senha })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        errorDiv.textContent = data.erro;
+        return;
+      }
+
+      localStorage.setItem('orkut_usuario', JSON.stringify(data.usuario));
+      window.location.href = 'chat.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>orkut - Painel Admin XYZ</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="orkut-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="orkut-logo">orkut</span>
+        <span class="xyz-badge">👑 Administração XYZ</span>
+      </div>
+      <a href="chat.html" style="color: #fff; text-decoration: underline;">← Voltar para o Chat</a>
+    </div>
+  </header>
+
+  <main class="login-wrapper">
+    <!-- Tabela de Usuários -->
+    <div class="card" style="margin-bottom: 16px;">
+      <h2 class="section-title">Gerenciar Funcionários Cadastrados</h2>
+      <table class="orkut-table">
+        <thead>
+          <tr>
+            <th>Foto</th>
+            <th>Nome</th>
+            <th>Usuário</th>
+            <th>Humor</th>
+            <th>Cargo</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaUsuarios"></tbody>
+      </table>
+    </div>
+
+    <!-- Formulário Completo de Edição pelo Admin -->
+    <div id="boxEdicaoAdmin" class="card hidden" style="margin-bottom: 16px; border: 2px solid #ed2590;">
+      <h2 class="section-title">Editando Perfil de: <span id="editTitulo" class="pink-text"></span></h2>
+      <form id="adminEditForm" class="form-stack">
+        <input type="hidden" id="editId" />
+
+        <label>Nome Completo:</label>
+        <input type="text" id="editNome" required />
+
+        <label>Username (Login):</label>
+        <input type="text" id="editUsername" required />
+
+        <label>Humor:</label>
+        <select id="editHumor">
+          <option value="😊 Feliz">😊 Feliz</option>
+          <option value="☕ Tomando café">☕ Tomando café</option>
+          <option value="💻 Codando muito">💻 Codando muito</option>
+          <option value="🎧 Ouvindo música">🎧 Ouvindo música</option>
+          <option value="🔥 Apagando incêndio">🔥 Apagando incêndio</option>
+          <option value="😴 Com sono">😴 Com sono</option>
+          <option value="👑 Gerenciando a XYZ">👑 Gerenciando a XYZ</option>
+        </select>
+
+        <label>Cargo / Permissão:</label>
+        <select id="editCargo">
+          <option value="usuario">Usuário Comum</option>
+          <option value="admin">Administrador (Admin)</option>
+        </select>
+
+        <label>Redefinir Senha (deixe vazio para manter):</label>
+        <input type="password" id="editSenha" placeholder="Nova senha opcional" />
+
+        <label>Nova Foto de Perfil:</label>
+        <input type="file" id="editFotoPerfil" accept="image/*" />
+        <label style="font-size: 11px; color: #666;">
+          <input type="checkbox" id="editRemoverPerfil" /> Remover foto de perfil
+        </label>
+
+        <label>Nova Foto de Fundo:</label>
+        <input type="file" id="editFotoFundo" accept="image/*" />
+        <label style="font-size: 11px; color: #666;">
+          <input type="checkbox" id="editRemoverFundo" /> Remover foto de fundo
+        </label>
+
+        <div id="adminEditError" class="error-msg"></div>
+
+        <div style="display: flex; gap: 10px; margin-top: 8px;">
+          <button type="submit" class="btn-orkut btn-pink">Salvar Tudo</button>
+          <button type="button" class="btn-orkut" onclick="fecharEdicao()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Moderação das Salas -->
+    <div class="card">
+      <h2 class="section-title">Moderação de Comunidades (Limpar Scraps)</h2>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn-orkut" onclick="limparSala('Geral XYZ')">🗑️ Limpar Geral XYZ</button>
+        <button class="btn-orkut" onclick="limparSala('Café & Fofocas')">🗑️ Limpar Café & Fofocas</button>
+        <button class="btn-orkut" onclick="limparSala('Suporte TI')">🗑️ Limpar Suporte TI</button>
+        <button class="btn-orkut" onclick="limparSala('Eu Odeio Acordar Cedo')">🗑️ Limpar Eu Odeio Acordar Cedo</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const usuarioLogado = JSON.parse(localStorage.getItem('orkut_usuario'));
+    if (!usuarioLogado || usuarioLogado.cargo !== 'admin') {
+      alert('Acesso restrito apenas para administradores!');
+      window.location.href = 'chat.html';
+    }
+
+    let listaUsuariosCache = [];
+
+    async function carregarDados() {
+      const res = await fetch('/api/admin/dados');
+      const data = await res.json();
+      listaUsuariosCache = data.usuarios;
+
+      const tbody = document.getElementById('tabelaUsuarios');
+      tbody.innerHTML = '';
+
+      data.usuarios.forEach((u) => {
+        const tr = document.createElement('tr');
+        const avatar = u.fotoPerfil
+          ? `<img src="${u.fotoPerfil}" style="width:32px;height:32px;border-radius:4px;object-fit:cover;">`
+          : '👤';
+
+        tr.innerHTML = `
+          <td>${avatar}</td>
+          <td>${u.nome}</td>
+          <td>@${u.username}</td>
+          <td>${u.humor}</td>
+          <td><strong>${u.cargo.toUpperCase()}</strong></td>
+          <td>
+            <button class="btn-orkut" onclick="abrirEdicao(${u.id})">✏️ Editar Perfil</button>
+            ${u.username !== 'admin' ? `<button class="btn-orkut" style="color:red;" onclick="excluirUsuario(${u.id})">Excluir</button>` : ''}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function abrirEdicao(id) {
+      const u = listaUsuariosCache.find((item) => item.id === id);
+      if (!u) return;
+
+      document.getElementById('editId').value = u.id;
+      document.getElementById('editTitulo').textContent = `${u.nome} (@${u.username})`;
+      document.getElementById('editNome').value = u.nome;
+      document.getElementById('editUsername').value = u.username;
+      document.getElementById('editHumor').value = u.humor;
+      document.getElementById('editCargo').value = u.cargo;
+      document.getElementById('editSenha').value = '';
+      document.getElementById('editRemoverPerfil').checked = false;
+      document.getElementById('editRemoverFundo').checked = false;
+      document.getElementById('adminEditError').textContent = '';
+
+      document.getElementById('boxEdicaoAdmin').classList.remove('hidden');
+      document.getElementById('boxEdicaoAdmin').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function fecharEdicao() {
+      document.getElementById('boxEdicaoAdmin').classList.add('hidden');
+    }
+
+    function processarImagem(file, maxWidth) {
+      return new Promise((resolve) => {
+        if (!file) return resolve(null);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const scale = Math.min(1, maxWidth / img.width);
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.75));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('adminEditForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = Number(document.getElementById('editId').value);
+      const userOriginal = listaUsuariosCache.find((u) => u.id === id);
+
+      let fotoPerfil = userOriginal.fotoPerfil;
+      let fotoFundo = userOriginal.fotoFundo;
+
+      if (document.getElementById('editRemoverPerfil').checked) {
+        fotoPerfil = '';
+      } else {
+        const novaPerfil = await processarImagem(document.getElementById('editFotoPerfil').files[0], 200);
+        if (novaPerfil) fotoPerfil = novaPerfil;
+      }
+
+      if (document.getElementById('editRemoverFundo').checked) {
+        fotoFundo = '';
+      } else {
+        const novaFundo = await processarImagem(document.getElementById('editFotoFundo').files[0], 1000);
+        if (novaFundo) fotoFundo = novaFundo;
+      }
+
+      const payload = {
+        nome: document.getElementById('editNome').value,
+        username: document.getElementById('editUsername').value,
+        humor: document.getElementById('editHumor').value,
+        cargo: document.getElementById('editCargo').value,
+        senha: document.getElementById('editSenha').value,
+        fotoPerfil,
+        fotoFundo
+      };
+
+      const res = await fetch(`/api/perfil/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        document.getElementById('adminEditError').textContent = data.erro;
+        return;
+      }
+
+      // Se o admin editou a própria conta, atualiza também o localStorage dele
+      if (id === usuarioLogado.id) {
+        localStorage.setItem('orkut_usuario', JSON.stringify(data.usuario));
+      }
+
+      alert('Usuário atualizado com sucesso!');
+      fecharEdicao();
+      carregarDados();
+    });
+
+    async function excluirUsuario(id) {
+      if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+      await fetch(`/api/admin/usuario/${id}`, { method: 'DELETE' });
+      carregarDados();
+    }
+
+    async function limparSala(sala) {
+      if (!confirm(`Apagar todos os scraps da comunidade "${sala}"?`)) return;
+      await fetch(`/api/admin/mensagens/${encodeURIComponent(sala)}`, { method: 'DELETE' });
+      alert('Comunidade limpa!');
+    }
+
+    carregarDados();
+  </script>
+</body>
+</html>

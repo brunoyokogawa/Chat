@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>orkut - Página de Recados XYZ</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body id="chatBody">
+  <header class="orkut-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="orkut-logo">orkut</span>
+        <span class="xyz-badge">Empresa XYZ</span>
+      </div>
+      <nav class="top-nav">
+        <a href="chat.html">Início</a>
+        <a href="perfil.html">✏️ Editar Perfil</a>
+        <a href="admin.html" id="adminLink" class="hidden" style="color: #ffe600; font-weight: bold;">👑 Painel Admin</a>
+      </nav>
+      </nav>
+      <div class="user-top-info">
+        <span id="topUserInfo"></span> |
+        <a href="#" id="logoutBtn" style="color: #fff; text-decoration: underline;">Sair</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="orkut-container">
+    <!-- Coluna 1: Perfil com Foto -->
+    <aside class="col-left card">
+      <div class="avatar-box">
+        <img id="profileImg" class="profile-photo hidden" alt="Foto de Perfil" />
+        <div class="avatar-placeholder" id="avatarInitials">XY</div>
+      </div>
+      <h3 class="profile-name" id="profileName">Usuário</h3>
+      <p class="profile-status" id="profileHumor">😊 Feliz</p>
+      <span id="adminBadge" class="admin-tag hidden">👑 ADMIN XYZ</span>
+
+      <hr class="divider" />
+      <div class="orkut-stats">
+        <div><span>scraps</span><strong id="scrapCount">0</strong></div>
+        <div><span>fãs</span><strong>★ 100%</strong></div>
+      </div>
+      <hr class="divider" />
+      <div class="trust-bars">
+        <div class="trust-item"><span>confiável:</span> <span>😊😊😊</span></div>
+        <div class="trust-item"><span>legal:</span> <span>🧊🧊🧊</span></div>
+        <div class="trust-item"><span>sexy:</span> <span>❤️❤️❤️</span></div>
+      </div>
+    </aside>
+
+    <!-- Coluna 2: Scraps, Fotos e Figurinhas -->
+    <section class="col-center">
+      <div class="card scrap-editor">
+        <div class="breadcrumb">Início &gt; Comunidades &gt; <strong id="currentRoomTitle">Geral XYZ</strong></div>
+        <form id="messageForm">
+          <textarea id="messageInput" rows="2" placeholder="Escreva um scrap para a equipe..."></textarea>
+
+          <!-- Bandeja de Figurinhas Nostálgicas -->
+          <div id="stickerPicker" class="sticker-picker hidden">
+            <div class="sticker-title">Clique para enviar uma figurinha clássica:</div>
+            <div class="sticker-grid" id="stickerGrid"></div>
+          </div>
+
+          <div class="editor-actions">
+            <div class="media-buttons">
+              <button type="button" id="toggleStickerBtn" class="btn-orkut">✨ Figurinhas</button>
+              <label for="photoUpload" class="btn-orkut" style="cursor: pointer;">📷 Enviar Foto</label>
+              <input type="file" id="photoUpload" accept="image/*" class="hidden" />
+            </div>
+            <button type="submit" class="btn-orkut btn-pink">enviar scrap</button>
+          </div>
+          <div id="chatError" class="error-msg" style="margin-top: 4px;"></div>
+        </form>
+      </div>
+
+      <div class="card scrap-feed-card">
+        <h2 class="section-title">Página de recados (<span id="roomBadge">Geral XYZ</span>)</h2>
+        <div id="messagesList" class="messages-list"></div>
+      </div>
+    </section>
+
+    <!-- Coluna 3: Amigos Online & Comunidades -->
+    <aside class="col-right">
+      <div class="card box-right">
+        <h4 class="box-title">membros online (<span id="onlineCount">0</span>)</h4>
+        <ul id="usersList" class="grid-list"></ul>
+      </div>
+
+      <div class="card box-right">
+        <h4 class="box-title">comunidades XYZ (4)</h4>
+        <ul id="roomsList" class="communities-list">
+          <li data-sala="Geral XYZ" class="active">🏢 Geral XYZ</li>
+          <li data-sala="Café & Fofocas">☕ Café & Fofocas</li>
+          <li data-sala="Suporte TI">🛠️ Suporte TI</li>
+          <li data-sala="Eu Odeio Acordar Cedo">⏰ Eu Odeio Acordar Cedo</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>

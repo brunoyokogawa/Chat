@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>orkut - Editar Perfil XYZ</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="orkut-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="orkut-logo">orkut</span>
+        <span class="xyz-badge">Editar Perfil</span>
+      </div>
+      <a href="chat.html" style="color: #fff; text-decoration: underline;">← Voltar para o Chat</a>
+    </div>
+  </header>
+
+  <main class="login-wrapper">
+    <div class="card" style="max-width: 540px; margin: 0 auto; padding: 22px;">
+      <h2 class="section-title">Editar meu perfil no <span class="pink-text">orkut XYZ</span></h2>
+
+      <form id="editarForm" class="form-stack">
+        <label>Nome de Exibição:</label>
+        <input type="text" id="nome" required />
+
+        <label>Nome de Usuário (Login):</label>
+        <input type="text" id="username" required />
+
+        <label>Humor Atual:</label>
+        <select id="humor">
+          <option value="😊 Feliz">😊 Feliz</option>
+          <option value="☕ Tomando café">☕ Tomando café</option>
+          <option value="💻 Codando muito">💻 Codando muito</option>
+          <option value="🎧 Ouvindo música">🎧 Ouvindo música</option>
+          <option value="🔥 Apagando incêndio">🔥 Apagando incêndio</option>
+          <option value="😴 Com sono">😴 Com sono</option>
+          <option value="👑 Gerenciando a XYZ">👑 Gerenciando a XYZ</option>
+        </select>
+
+        <label>Nova Senha (deixe em branco para manter a atual):</label>
+        <input type="password" id="senha" placeholder="Digite apenas se quiser trocar" />
+
+        <label>Trocar Foto de Perfil:</label>
+        <input type="file" id="fotoPerfilInput" accept="image/*" />
+        <label style="font-size: 11px; color: #666;">
+          <input type="checkbox" id="removerFotoPerfil" /> Remover foto de perfil atual
+        </label>
+
+        <label>Trocar Foto de Fundo (Papel de Parede):</label>
+        <input type="file" id="fotoFundoInput" accept="image/*" />
+        <label style="font-size: 11px; color: #666;">
+          <input type="checkbox" id="removerFotoFundo" /> Remover papel de parede atual
+        </label>
+
+        <div id="statusMsg" class="error-msg"></div>
+
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button type="submit" class="btn-orkut btn-pink">Salvar Alterações</button>
+          <a href="chat.html" class="btn-orkut" style="text-decoration: none;">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    const usuario = JSON.parse(localStorage.getItem('orkut_usuario'));
+    if (!usuario) window.location.href = 'index.html';
+
+    document.getElementById('nome').value = usuario.nome;
+    document.getElementById('username').value = usuario.username;
+    document.getElementById('humor').value = usuario.humor;
+
+    function processarImagem(file, maxWidth) {
+      return new Promise((resolve) => {
+        if (!file) return resolve(null);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const scale = Math.min(1, maxWidth / img.width);
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.75));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('editarForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusDiv = document.getElementById('statusMsg');
+      statusDiv.textContent = 'Salvando alterações...';
+
+      let fotoPerfil = usuario.fotoPerfil;
+      let fotoFundo = usuario.fotoFundo;
+
+      if (document.getElementById('removerFotoPerfil').checked) {
+        fotoPerfil = '';
+      } else {
+        const novaPerfil = await processarImagem(document.getElementById('fotoPerfilInput').files[0], 200);
+        if (novaPerfil) fotoPerfil = novaPerfil;
+      }
+
+      if (document.getElementById('removerFotoFundo').checked) {
+        fotoFundo = '';
+      } else {
+        const novaFundo = await processarImagem(document.getElementById('fotoFundoInput').files[0], 1000);
+        if (novaFundo) fotoFundo = novaFundo;
+      }
+
+      const payload = {
+        nome: document.getElementById('nome').value,
+        username: document.getElementById('username').value,
+        humor: document.getElementById('humor').value,
+        senha: document.getElementById('senha').value,
+        fotoPerfil,
+        fotoFundo
+      };
+
+      const res = await fetch(`/api/perfil/${usuario.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        statusDiv.textContent = data.erro;
+        return;
+      }
+
+      localStorage.setItem('orkut_usuario', JSON.stringify(data.usuario));
+      alert('Perfil atualizado!');
+      window.location.href = 'chat.html';
+    });
+  </script>
+</body>
+</html>

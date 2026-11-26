@@ -1,0 +1,408 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+body {
+  background-color: #d4dded;
+  color: #333;
+}
+
+.hidden { display: none !important; }
+
+.orkut-header {
+  background: linear-gradient(to bottom, #6f95d6, #527bbd);
+  border-bottom: 1px solid #3c5f9c;
+  color: #fff;
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.header-container {
+  width: 980px;
+  max-width: 96%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.orkut-logo {
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: -1px;
+  text-shadow: 1px 1px 1px #2f4d80;
+}
+
+.xyz-badge {
+  background: #ed2590;
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  font-weight: bold;
+}
+
+.top-nav a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px;
+  font-size: 11px;
+}
+
+.login-wrapper {
+  width: 860px;
+  max-width: 95%;
+  margin: 35px auto;
+}
+
+.login-box {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.login-left {
+  flex: 1.4;
+  background: #fff;
+  padding: 28px;
+  border-radius: 6px;
+  border: 1px solid #b5c6e3;
+}
+
+.orkut-logo-big {
+  font-size: 46px;
+  color: #ed2590;
+  letter-spacing: -2px;
+  margin-bottom: 14px;
+}
+
+.login-left p { margin-bottom: 10px; line-height: 1.5; }
+.pink-text { color: #ed2590; font-weight: bold; }
+
+.admin-tip {
+  margin-top: 16px;
+  background: #fff4fa;
+  border: 1px dashed #ed2590;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.login-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-card, .login-footer-box {
+  background: #e8eef7;
+  border: 1px solid #b5c6e3;
+  border-radius: 6px;
+  padding: 18px;
+  text-align: center;
+}
+
+.login-card { text-align: left; }
+.login-title { margin-bottom: 12px; color: #2b4b82; }
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-stack input, .form-stack select {
+  padding: 6px;
+  border: 1px solid #9ab0d4;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.orkut-link { color: #2b4b82; text-decoration: none; }
+.orkut-link:hover { color: #ed2590; text-decoration: underline; }
+
+.btn-orkut {
+  background: linear-gradient(to bottom, #ffffff, #dce6f5);
+  border: 1px solid #7f9db9;
+  color: #2b4b82;
+  font-weight: bold;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.btn-orkut:hover {
+  border-color: #ed2590;
+  color: #ed2590;
+}
+
+.btn-pink {
+  background: #ed2590;
+  color: #fff;
+  border-color: #c41874;
+}
+
+.btn-pink:hover {
+  background: #d11b7d;
+  color: #fff;
+}
+
+.orkut-container {
+  width: 980px;
+  max-width: 96%;
+  margin: 14px auto;
+  display: grid;
+  grid-template-columns: 180px 1fr 230px;
+  gap: 12px;
+  align-items: start;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 6px;
+  padding: 12px;
+  border: 1px solid #bfd0eb;
+}
+
+.avatar-box {
+  background: #e8eef7;
+  padding: 8px;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.profile-photo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #9ab0d4;
+}
+
+.avatar-placeholder {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #ed2590, #527bbd);
+  color: #fff;
+  font-size: 32px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.profile-name { color: #2b4b82; font-size: 13px; margin-bottom: 4px; }
+.profile-status { color: #666; font-size: 11px; }
+
+.admin-tag {
+  display: inline-block;
+  margin-top: 6px;
+  background: #ffe600;
+  color: #333;
+  font-weight: bold;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.divider { border: 0; border-top: 1px solid #e4ecfa; margin: 10px 0; }
+.orkut-stats { display: flex; justify-content: space-around; text-align: center; font-size: 11px; }
+.orkut-stats span { display: block; color: #666; }
+.trust-item { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
+
+.col-center { display: flex; flex-direction: column; gap: 12px; }
+.breadcrumb { font-size: 11px; color: #666; margin-bottom: 8px; }
+
+#messageInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #9ab0d4;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.editor-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.media-buttons { display: flex; gap: 6px; }
+
+/* Figurinhas */
+.sticker-picker {
+  background: #f4f7fc;
+  border: 1px solid #bfd0eb;
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 8px;
+}
+
+.sticker-title { font-size: 11px; color: #2b4b82; margin-bottom: 6px; font-weight: bold; }
+
+.sticker-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.sticker-btn {
+  background: #fff;
+  border: 1px solid #d4dded;
+  border-radius: 4px;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.sticker-btn:hover { border-color: #ed2590; background: #fff4fa; }
+.sticker-btn small { font-size: 10px; color: #555; }
+
+.section-title {
+  font-size: 14px;
+  color: #333;
+  border-bottom: 1px solid #d4dded;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.messages-list {
+  max-height: 450px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scrap-item {
+  background: #f4f7fc;
+  border-bottom: 1px solid #d4dded;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.scrap-item.me {
+  background: #fff2f9;
+  border-left: 3px solid #ed2590;
+}
+
+.scrap-row { display: flex; gap: 10px; align-items: flex-start; }
+
+.scrap-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid #b5c6e3;
+}
+
+.scrap-avatar-fallback {
+  width: 42px;
+  height: 42px;
+  border-radius: 4px;
+  background: #527bbd;
+  color: #fff;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.scrap-content { flex: 1; }
+.scrap-header { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 11px; }
+.scrap-author { color: #2b4b82; font-weight: bold; }
+.scrap-humor { color: #777; font-weight: normal; }
+.scrap-time { color: #888; }
+.scrap-body { line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
+
+.admin-mini {
+  background: #ffe600;
+  color: #333;
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.scrap-photo {
+  max-width: 100%;
+  max-height: 260px;
+  border-radius: 4px;
+  border: 1px solid #bfd0eb;
+  margin-top: 4px;
+}
+
+.sticker-bubble {
+  display: inline-block;
+  background: linear-gradient(135deg, #fff, #ffe6f3);
+  border: 2px solid #ed2590;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #ed2590;
+  margin-top: 2px;
+}
+
+.system-msg {
+  text-align: center;
+  font-size: 11px;
+  color: #527bbd;
+  background: #eef3fb;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.col-right { display: flex; flex-direction: column; gap: 12px; }
+.box-title { color: #2b4b82; border-bottom: 1px solid #e4ecfa; padding-bottom: 5px; margin-bottom: 8px; }
+.grid-list, .communities-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+
+.grid-list li {
+  background: #f4f7fc;
+  padding: 5px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  color: #2b4b82;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mini-avatar { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
+
+.communities-list li {
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #2b4b82;
+  font-size: 11px;
+}
+
+.communities-list li:hover { background: #e8eef7; }
+.communities-list li.active { background: #ed2590; color: #fff; font-weight: bold; }
+
+.orkut-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.orkut-table th, .orkut-table td { border: 1px solid #d4dded; padding: 8px; text-align: left; }
+.orkut-table th { background: #e8eef7; color: #2b4b82; }
+
+.error-msg { color: #d9005b; font-size: 11px; font-weight: bold; }
+
+@media (max-width: 768px) {
+  .orkut-container { grid-template-columns: 1fr; }
+  .sticker-grid { grid-template-columns: repeat(2, 1fr); }
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>orkut - Criar Conta XYZ</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="orkut-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="orkut-logo">orkut</span>
+        <span class="xyz-badge">Novo Membro</span>
+      </div>
+      <a href="index.html" style="color: #fff; text-decoration: none;">Voltar ao Login</a>
+    </div>
+  </header>
+
+  <main class="login-wrapper">
+    <div class="card" style="max-width: 520px; margin: 0 auto; padding: 22px;">
+      <h2 class="section-title">Criar perfil no <span class="pink-text">orkut XYZ</span></h2>
+      <form id="cadastroForm" class="form-stack">
+        <label>Nome Completo / Exibição:</label>
+        <input type="text" id="nome" placeholder="Ex: Ana Silva" required />
+
+        <label>Nome de Usuário (para login):</label>
+        <input type="text" id="username" placeholder="Ex: ana.silva" required />
+
+        <label>Senha:</label>
+        <input type="password" id="senha" placeholder="Crie uma senha" required />
+
+        <label>Humor inicial:</label>
+        <select id="humor">
+          <option value="😊 Feliz">😊 Feliz</option>
+          <option value="☕ Tomando café">☕ Tomando café</option>
+          <option value="💻 Codando muito">💻 Codando muito</option>
+          <option value="🎧 Ouvindo música">🎧 Ouvindo música</option>
+          <option value="🔥 Apagando incêndio">🔥 Apagando incêndio</option>
+        </select>
+
+        <label>Foto de Perfil (opcional):</label>
+        <input type="file" id="fotoPerfilInput" accept="image/*" />
+
+        <label>Foto de Fundo / Papel de Parede (opcional):</label>
+        <input type="file" id="fotoFundoInput" accept="image/*" />
+
+        <div id="cadastroMsg" class="error-msg"></div>
+        <div style="display: flex; gap: 10px; margin-top: 8px;">
+          <button type="submit" class="btn-orkut">Finalizar Cadastro</button>
+          <a href="index.html" class="btn-orkut" style="text-decoration: none;">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    // Converte e redimensiona imagem para não pesar o db.json
+    function processarImagem(file, maxWidth) {
+      return new Promise((resolve) => {
+        if (!file) return resolve('');
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const scale = Math.min(1, maxWidth / img.width);
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.75));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('cadastroForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msgDiv = document.getElementById('cadastroMsg');
+      msgDiv.textContent = 'Processando perfil...';
+
+      const filePerfil = document.getElementById('fotoPerfilInput').files[0];
+      const fileFundo = document.getElementById('fotoFundoInput').files[0];
+
+      const fotoPerfil = await processarImagem(filePerfil, 200);
+      const fotoFundo = await processarImagem(fileFundo, 1000);
+
+      const payload = {
+        nome: document.getElementById('nome').value,
+        username: document.getElementById('username').value,
+        senha: document.getElementById('senha').value,
+        humor: document.getElementById('humor').value,
+        fotoPerfil,
+        fotoFundo
+      };
+
+      const res = await fetch('/api/cadastro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        msgDiv.textContent = data.erro;
+        return;
+      }
+
+      alert('Conta criada com sucesso! Faça login para entrar.');
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>
